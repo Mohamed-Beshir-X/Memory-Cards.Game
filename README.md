@@ -6,6 +6,10 @@ Designed and developed by **Mohamed Beshir (MB Games)**
 
 ---
 
+**Level:** Intermediate  
+
+---
+
 ## ✨ Features
 
 - 🎬 **Cinematic intro experience** – interactive animated start screens with smooth 3D transitions and sound effects.  
