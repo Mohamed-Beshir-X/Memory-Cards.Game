@@ -46,7 +46,7 @@ Designed and developed by **Mohamed Beshir (MB Games)**
 ## 📸 Preview
 
 
-![img](1-(1).jpg)
+![img](".imgs/%20(1).jpg")
 
 
 
