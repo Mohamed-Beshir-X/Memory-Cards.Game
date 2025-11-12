@@ -46,7 +46,7 @@ Designed and developed by **Mohamed Beshir (MB Games)**
 ## 📸 Preview
 
 
-`/backgroung.png`  
+![Start Screen](backgroung.png)
 
 
 ---
