@@ -1,0 +1,633 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    font-family: Arial, tahoma, sans-serif;
+    background-image: url(../background.png);
+    background-size: cover;
+
+}
+.first-page{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 99999;
+}
+.first-page.remove{
+    animation: remove 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.first-page button{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    background-color: #009688;
+    color: white;
+    font-size: 35px;
+    padding: 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.first-page button:hover{
+    background-color: #016d63;
+}
+.first-page button:hover::before{
+    background-color: #0d3e39;
+}
+.first-page button::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -12px;
+    width: 100%;
+    height: 23px;
+    background-color: #11514b;
+    transition: 0.5s;
+}
+.first-page button.clicked{
+    transform: translate(-50%, calc(-50% + 3px ));
+    animation: clicked 0.5s linear infinite alternate; 
+    cursor: none;
+}
+.first-page button.clicked:hover{
+    background-color: #009688;
+}
+.first-page button.clicked:hover::before{
+    background-color: #11514b;
+}
+.first-page button.clicked::before{
+    transform: translateY(-5px); 
+}
+.developer{
+    position: fixed;
+    z-index: 9999;
+    background-color: white;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+.developer.active{
+    animation: introduction 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation-delay: 5s;
+}
+.developer h2{
+    position: relative;
+    color: #009688;
+    font-size: 38px;
+}
+.developer.active h2{
+    animation: lose-appearing 3s linear;
+}
+
+.developer h2 span{
+    position: absolute;
+    right: -45px;
+    font-size: 16px;
+    bottom: -18px;
+    color: #f44336;
+}
+.start{
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    background-color: #009688c7;
+}
+.start .creator{
+    position: absolute;
+    left: 20px;
+    bottom: 30px;
+    font-size: 25px;
+    color: white;
+    border: 2px dashed;
+    padding: 5px;
+    transition: 1s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.start .creator::before{
+    content: "";
+    position: absolute;
+    top: 7px;
+    left: 145px;
+    height: 25px;
+    width: 0px;
+    background-color: #efff008f;
+    z-index: -1;
+    transition: 1s;
+    transition-delay: 1s;
+}
+.start .creator:hover{
+    color: black;
+}
+.start .creator:hover::before{
+    width: 194px;
+}
+.start p{
+    display: inline;
+}
+.start span.start-game,
+.start span.game-info{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50% , -50%);
+    color: white;
+    background-color: #f44336;
+    font-size: 30px;
+    padding: 15px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    animation: coloring 2s infinite linear alternate;
+}
+.start span.game-info{
+    animation: none;
+    transform: translate(-50%, 127%);
+    padding: 9px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    transition: 0.5s;
+}
+.start span.game-info:hover{
+    background-color: #db3125;
+}
+.start div.game-info{
+    background-color: white;
+    width: fit-content;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50% , -50%);
+    padding: 15px;
+    border-radius: 15px;
+    display: none;
+    i{
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        color: white;
+        padding: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+    h3{
+        color: #009688;
+        margin-bottom: 15px;
+    }
+    h2{
+        color: #ff1c0b;
+    }
+    p{
+        line-height: 1.4;
+        color: #464545;
+    }
+    &.active{
+        display: block;
+        animation: appeared 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+    &.remove{
+        display: none;
+    }
+}
+
+.alert{
+    z-index: 3;
+    position: absolute;
+    background-color: white;
+    padding: 15px;
+    border-radius: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -128px;
+    transition: 1s;
+}
+.alert.active{
+    top: 25px;
+}
+.alert.vibr{
+    animation: vibr 0.8s linear;
+}
+.alert .input{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.alert .input input{
+    border: none;
+    border-bottom: 2px solid;
+    padding: 5px;
+    width: 80%;
+    margin-right: 10px;
+    transition: 0.5s;
+}
+.alert .input input:focus{
+    outline: none;
+    border-color: #009688;
+}
+.alert .input span{
+    flex: 1;
+    color: white;
+    background-color: #009688;
+    padding: 5px;
+    text-align: center;
+    border-radius: 5px;
+    line-height: 15px;
+    cursor: pointer;
+}
+.container{
+    width: 600px;
+    margin: 20px auto;
+}
+.info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border: 3px dashed #0c0705;
+    color: #0c0705;
+    font-weight: bold;
+}
+.info .name span,
+.info .tries span{
+    color: #f44336;
+}
+.info .time{
+    color: #f44336;
+    font-size: 36px;
+    font-weight: bold;
+}
+.info .time.starting{
+    color: green;
+}
+.again.main{
+    position: absolute;
+    left: 31px;
+    top: 35px;
+    color: white;
+    font-size: 24px;
+    background-color: #634236;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.again.main:hover{
+    background-color: #543429;
+    color: #eee;
+}
+.game-blocks{
+    display: flex;
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.game-blocks.end{
+    pointer-events: none;
+}
+.game-blocks.no-clicking{
+    pointer-events: none;
+}
+.game-blocks .block{
+    margin: 5px;
+    width: 100px;
+    height: 130px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    position: relative;
+    cursor: pointer;
+}
+.game-blocks .block.flipped,
+.game-blocks .block.matched{
+    transform: rotateY(180deg);
+    pointer-events: none;
+}
+.game-blocks .block i{
+    font-size: 45px;
+    color: #5f443b;
+}
+.game-blocks .back{
+    background-color: #a5a5a5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    transform: rotateY(180deg);
+    border: 3px solid #0c0705;
+}
+.game-blocks .front{
+    background-color: #5f443b;
+    height: 100%;
+    border: 5px solid #0c0705;
+}
+.game-blocks .front::before{
+    content: "?";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 75px;
+    font-weight: bold;
+}
+.game-blocks .face{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+}
+
+.lose-container,
+.win-container{
+    width: 100%;
+    height: 100%;
+    transition: 0.5s;
+
+}
+
+.win-container .win,
+.lose-container .lose{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 7px 20px;
+    border-radius: 15px;
+    transition: 0.5s;
+    z-index: 100;
+    animation: win-appearing 1.5s cubic-bezier(1, 0, 0, 1);
+}
+.lose-container .lose{
+    animation: lose-appearing 1.5s linear;
+}
+.lose h2{
+    color: red;
+}
+.win h2{
+    color: rgb(0, 255, 64);
+}
+.lose p{
+    color: #ff1c0b;
+    font-weight: bold;
+}
+.win p{
+    color: #49594d;
+    font-weight: bold;
+}
+
+.win i.again,
+.lose i.again{
+    color: rgb(0, 255, 64);
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    transition: 0.5s;
+}
+.lose i.again{
+    color: rgb(255, 17, 0);
+}
+
+.win i.close,
+.lose i.close{
+    position: absolute;
+    color: white;
+    cursor: pointer;
+    transition: 0.5s;
+    top: -4px;
+    right: 1px;
+    background-color: rgb(0, 255, 64);
+    padding: 3px;
+    border-radius: 50%;
+    width: 25px;
+}
+.lose i.close{
+    background-color: rgb(255, 17, 0);
+}
+.lose i.again:hover,
+.win i.again:hover{
+    color: rgb(0, 140, 255);
+}
+.lose-layer,
+.win-layer{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.662);
+    z-index: 99;
+}
+.ranking{
+    position: absolute;
+    left: -496px;
+    top: 0;
+    width: 500px;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    transition: 1s;
+}
+.ranking.open{
+    left: 0px;
+}
+.ranking.open .button{
+    animation: none;
+}
+.ranking .button{
+    position: absolute;
+    right: -31px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #634236;
+    color: white;
+    padding: 8px;
+    border-radius: 50%;
+    width: 41px;
+    font-size: 21px;
+    cursor: pointer;
+    transition: 0.5s;
+    animation: glowing 3s alternate infinite linear;
+    animation-delay: 5s;
+
+}
+.ranking .button:hover{
+    color: rgb(194, 190, 190);
+    background-color: #39241d;
+}
+.ranking h1{
+    position: relative;
+    margin: 0px auto;
+    padding: 20px;
+    color: #634236;
+}
+.ranking h1 i{
+    position: absolute;
+    left: -4px;
+    top: 5px;
+    font-size: 26px;
+    transform: rotate(-40deg);
+}
+.ranking .main-row{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    color: white;
+    font-weight: bold;
+    background-color: #634236;
+    letter-spacing: 1px;
+}
+
+.ranking .ra-container .row{
+    display: flex;
+    justify-content: space-between;
+    padding: 14px;
+    text-align: center;
+    letter-spacing: 1px;
+    background-color: #6342366e;
+    margin: 8px 0px;
+}
+.ranking .ra-container .row.none{
+    display: none;
+}
+.ranking .row div{
+    width: 50px;
+    font-size: 18px;
+    color: #634236;
+} 
+@keyframes vibr{
+    0%{
+        transform: translateX(-50%);
+    }
+    25%{
+        transform: translateX(-55%);
+    }
+    50%{
+        transform: translateX(-45%);
+    }
+    75%{
+        transform: translateX(-55%);
+    }
+    100%{
+        transform: translateX(-50%);
+    }
+}
+@keyframes coloring{
+    from{
+        color: rgb(243, 243, 243);
+    }
+    to{
+        color: #f44336;
+    }
+}
+@keyframes lose-appearing{
+    from {
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+@keyframes win-appearing{
+    from {
+        left: -500px;
+    }
+    to{
+        left: 50%;
+    }
+}
+@keyframes glowing{
+    0%{
+        transform: translateY(-50%) rotate(0deg);
+    }
+    10%{
+        transform: translateY(-50%) rotate(20deg);
+    }
+    20%{
+        transform: translateY(-50%) rotate(-20deg);
+    }
+    30%{
+        transform: translateY(-50%) rotate(20deg);
+    }
+    40%{
+        transform: translateY(-50%) rotate(-20deg);
+    }
+    50%{
+        transform: translateY(-50%) rotate(20deg);
+    }
+    60%{
+        transform: translateY(-50%) rotate(0deg);
+    }
+    70%{
+        transform: translateY(-50%) rotate(0deg);
+    }
+    80%{
+        transform: translateY(-50%) rotate(0deg);
+    }
+    90%{
+        transform: translateY(-50%) rotate(0deg);
+    }
+    100%{
+        transform: translateY(-50%) rotate(0deg);
+    }
+}
+@keyframes introduction{
+    from {
+        transform: translateY(0);
+    }
+    to{
+        transform: translateY(-1000px);
+    }
+}
+@keyframes appeared{
+    from{
+        top: 40%;
+        opacity: 0;
+    }
+    to{
+        top: 50%;
+        opacity: 1;
+    }
+}
+@keyframes clicked{
+    from{
+        color: white;
+    }
+    to{
+        color: #009688;
+    }
+}
+@keyframes remove{
+    from{
+        transform: translateX(0);
+    }
+    to{
+        transform: translateX(-1500px);
+    }
+}
