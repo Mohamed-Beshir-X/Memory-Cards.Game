@@ -84,8 +84,7 @@ nameBT.onclick = function () {
             time.classList.remove("starting")
             time.innerHTML = 60
 
-            // --- Single source of truth for the game timer (fixes the race
-            // condition / "0" string-match bug from the original version) ---
+            // --- Single source of truth for the game timer ---
             let timing = setInterval(() => {
                 time.innerHTML--
 
@@ -106,17 +105,13 @@ nameBT.onclick = function () {
 
 let blocks = Array.from([...blocksContainer.children])
 let blocksOrder = Array.from(blocks.keys())
-// shuffle(blocksOrder)
+shuffle(blocksOrder)
 
 let matched = []
 
 blocks.forEach((block, i) => {
     block.style.order = blocksOrder[i]
     block.addEventListener("click", function () {
-        // Guard: ignore clicks on a block that is already flipped/matched,
-        // while two cards are being checked, or once the game has ended.
-        // (Without this guard you could re-click matched pairs and inflate
-        // `matched.length`, triggering a false win.)
         if (
             block.classList.contains("flipped") ||
             block.classList.contains("matched") ||
@@ -284,8 +279,6 @@ function win() {
     let playerTries = Number(document.querySelector(".tries span").innerHTML)
     let existingScore = localStorage.getItem(playerName)
 
-    // Only overwrite the stored score if this run has fewer mistakes
-    // (or the player has no stored score yet).
     if (existingScore === null || playerTries < Number(existingScore)) {
         localStorage.setItem(playerName, playerTries)
     }
@@ -305,9 +298,7 @@ rankingBT.addEventListener("click", function () {
 function ranking() {
     rankingScores = []
 
-    // Fix: iterating a live NodeList with forEach while removing its items
-    // skips every other node. Convert to a static array first.
-    Array.from(rankingContainer.childNodes).forEach((child) => {
+    Array.from(rankingContainer.children).forEach((child) => {
         child.remove()
     })
 
@@ -315,9 +306,6 @@ function ranking() {
         rankingScores.push(`${key}-${value}`)
     }
 
-    // Fix: compare scores numerically, not as strings
-    // (string comparison broke as soon as a score reached 2 digits,
-    // e.g. "9" > "10" was true lexicographically).
     for (let i = 0; i < rankingScores.length; i++) {
         for (let j = rankingScores.length - 1; j > 0; j--) {
             let currentScore = Number(rankingScores[j].slice(rankingScores[j].indexOf("-") + 1))
@@ -359,7 +347,7 @@ function ranking() {
 ranking()
 
 function resetRanking() {
-    for (let i = 0; i < rankingContainer.childNodes.length; i++) {
-        rankingContainer.childNodes[i].classList.add("none")
+    for (let i = 0; i < rankingContainer.children.length; i++) {
+        rankingContainer.children[i].classList.add("none")
     }
 }
