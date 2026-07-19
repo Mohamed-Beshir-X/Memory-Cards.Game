@@ -1,12 +1,41 @@
+/* =====================================================
+   Memory Cards Game — Responsive Stylesheet
+   إعادة هيكلة الملف لدعم التجاوب الكامل (Desktop / Laptop / Mobile)
+   بدون أي تغيير في الألوان أو الهوية البصرية للعبة
+   ===================================================== */
+
+/* ---------- متغيرات عامة (Design Tokens) ----------
+   بنجمع الألوان والمقاسات المتكررة في متغيرات
+   عشان الكود يبقى أسهل في الصيانة وميتكررش */
+:root{
+    --main-color: #009688;
+    --main-color-dark: #016d63;
+    --wood-color: #5f443b;
+    --wood-color-dark: #0c0705;
+    --brown-accent: #634236;
+    --red-color: #f44336;
+    --card-min: 70px;   /* أصغر مقاس ممكن للكارت */
+    --card-max: 100px;  /* أكبر مقاس ممكن للكارت (زي الأصلي) */
+}
+
 *{
     box-sizing: border-box;
 }
+
+html, body{
+    /* منع أي Scroll أفقي على كل المقاسات */
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 body{
     font-family: Arial, tahoma, sans-serif;
     background-image: url(../background.png);
     background-size: cover;
-
+    background-position: center;
 }
+
+/* ---------- شاشة البداية (Loader) ---------- */
 .first-page{
     position: fixed;
     left: 0;
@@ -25,18 +54,19 @@ body{
     top: 50%;
     transform: translate(-50%, -50%);
     border: none;
-    background-color: #009688;
+    background-color: var(--main-color);
     color: white;
-    font-size: 35px;
-    padding: 15px;
+    /* بدل الحجم الثابت px بنستخدم clamp عشان يترسم كويس على أصغر شاشة */
+    font-size: clamp(20px, 5vw, 35px);
+    padding: clamp(10px, 3vw, 15px);
     border-radius: 15px;
     font-weight: bold;
     cursor: pointer;
     transition: 0.5s;
+    white-space: nowrap;
 }
-
 .first-page button:hover{
-    background-color: #016d63;
+    background-color: var(--main-color-dark);
 }
 .first-page button:hover::before{
     background-color: #0d3e39;
@@ -53,18 +83,20 @@ body{
 }
 .first-page button.clicked{
     transform: translate(-50%, calc(-50% + 3px ));
-    animation: clicked 0.5s linear infinite alternate; 
+    animation: clicked 0.5s linear infinite alternate;
     cursor: none;
 }
 .first-page button.clicked:hover{
-    background-color: #009688;
+    background-color: var(--main-color);
 }
 .first-page button.clicked:hover::before{
     background-color: #11514b;
 }
 .first-page button.clicked::before{
-    transform: translateY(-5px); 
+    transform: translateY(-5px);
 }
+
+/* ---------- شاشة اسم المطور ---------- */
 .developer{
     position: fixed;
     z-index: 9999;
@@ -76,7 +108,8 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    
+    padding: 0 15px; /* حماية من الالتصاق بحواف الشاشة في الموبايل */
+    text-align: center;
 }
 .developer.active{
     animation: introduction 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -84,20 +117,22 @@ body{
 }
 .developer h2{
     position: relative;
-    color: #009688;
-    font-size: 38px;
+    color: var(--main-color);
+    font-size: clamp(24px, 6vw, 38px);
 }
 .developer.active h2{
     animation: lose-appearing 3s linear;
 }
-
 .developer h2 span{
     position: absolute;
     right: -45px;
-    font-size: 16px;
+    font-size: clamp(11px, 2.5vw, 16px);
     bottom: -18px;
-    color: #f44336;
+    color: var(--red-color);
+    white-space: nowrap;
 }
+
+/* ---------- شاشة البداية (Start) ---------- */
 .start{
     position: fixed;
     left: 0;
@@ -111,15 +146,15 @@ body{
     position: absolute;
     left: 20px;
     bottom: 30px;
-    font-size: 25px;
+    font-size: clamp(14px, 3.5vw, 25px);
     color: white;
     border: 2px dashed;
     padding: 5px;
     transition: 1s;
     cursor: pointer;
     text-decoration: none;
+    max-width: calc(100% - 40px); /* يفضل جوه حدود الشاشة في الموبايل */
 }
-
 .start .creator::before{
     content: "";
     position: absolute;
@@ -148,18 +183,19 @@ body{
     top: 50%;
     transform: translate(-50% , -50%);
     color: white;
-    background-color: #f44336;
-    font-size: 30px;
-    padding: 15px 25px;
+    background-color: var(--red-color);
+    font-size: clamp(18px, 4vw, 30px);
+    padding: clamp(10px, 2.5vw, 15px) clamp(16px, 4vw, 25px);
     border-radius: 12px;
     cursor: pointer;
     animation: coloring 2s infinite linear alternate;
+    white-space: nowrap;
 }
 .start span.game-info{
     animation: none;
     transform: translate(-50%, 127%);
     padding: 9px 16px;
-    font-size: 16px;
+    font-size: clamp(13px, 2.8vw, 16px);
     border-radius: 10px;
     transition: 0.5s;
 }
@@ -168,16 +204,21 @@ body{
 }
 .start div.game-info{
     background-color: white;
-    width: fit-content;
+    /* بدل fit-content الثابت اللي ممكن يكسر الموبايل، بنحدد نسبة من الشاشة
+       مع تحديد ارتفاع أقصى وسكرول داخلي عشان المحتوى الطويل */
+    width: min(600px, 90vw);
+    max-height: 85vh;
+    overflow-y: auto;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50% , -50%);
-    padding: 15px;
+    padding: clamp(12px, 3vw, 15px);
     border-radius: 15px;
     display: none;
     i{
-        position: absolute;
+        position: sticky;
+        float: right;
         top: -10px;
         right: -10px;
         color: white;
@@ -191,15 +232,18 @@ body{
         cursor: pointer;
     }
     h3{
-        color: #009688;
+        color: var(--main-color);
         margin-bottom: 15px;
+        font-size: clamp(16px, 3.5vw, 20px);
     }
     h2{
         color: #ff1c0b;
+        font-size: clamp(18px, 4vw, 24px);
     }
     p{
         line-height: 1.4;
         color: #464545;
+        font-size: clamp(13px, 2.8vw, 16px);
     }
     &.active{
         display: block;
@@ -210,6 +254,7 @@ body{
     }
 }
 
+/* ---------- نافذة إدخال الاسم ---------- */
 .alert{
     z-index: 3;
     position: absolute;
@@ -220,6 +265,7 @@ body{
     transform: translateX(-50%);
     top: -128px;
     transition: 1s;
+    width: min(400px, 90vw); /* يمنع النافذة من الالتصاق بالحواف على الموبايل */
 }
 .alert.active{
     top: 25px;
@@ -227,66 +273,85 @@ body{
 .alert.vibr{
     animation: vibr 0.8s linear;
 }
+.alert h2{
+    font-size: clamp(16px, 3.5vw, 20px);
+}
 .alert .input{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 .alert .input input{
     border: none;
     border-bottom: 2px solid;
     padding: 5px;
     width: 80%;
-    margin-right: 10px;
+    min-width: 0; /* يمنع الـ input من الخروج بره الفليكس على الموبايل */
+    margin-right: 0;
     transition: 0.5s;
 }
 .alert .input input:focus{
     outline: none;
-    border-color: #009688;
+    border-color: var(--main-color);
 }
 .alert .input span{
-    flex: 1;
+    flex-shrink: 0;
     color: white;
-    background-color: #009688;
-    padding: 5px;
+    background-color: var(--main-color);
+    padding: 5px 10px;
     text-align: center;
     border-radius: 5px;
     line-height: 15px;
     cursor: pointer;
 }
+
+/* ---------- الحاوية الرئيسية للعبة ----------
+   الأصل كان width: 600px ثابت، دلوقتي بيتلم على الموبايل
+   وبيفضل بحد أقصى 600px على الشاشات الكبيرة مع توسيط تلقائي */
 .container{
-    width: 600px;
+    width: 100%;
+    max-width: 600px;
     margin: 20px auto;
+    padding: 0 15px;
+    position: relative;
 }
+
+/* ---------- شريط المعلومات (الاسم / الوقت / الأخطاء) ---------- */
 .info{
     display: flex;
+    flex-wrap: wrap; /* يسمح للعناصر تنزل سطر جديد على الشاشات الضيقة جداً */
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    border: 3px dashed #0c0705;
-    color: #0c0705;
+    gap: 10px;
+    padding: clamp(12px, 3vw, 20px);
+    border: 3px dashed var(--wood-color-dark);
+    color: var(--wood-color-dark);
     font-weight: bold;
+    font-size: clamp(13px, 3vw, 16px);
 }
 .info .name span,
 .info .tries span{
-    color: #f44336;
+    color: var(--red-color);
 }
 .info .time{
-    color: #f44336;
-    font-size: 36px;
+    color: var(--red-color);
+    font-size: clamp(22px, 6vw, 36px);
     font-weight: bold;
 }
 .info .time.starting{
     color: green;
 }
+
+/* ---------- زر إعادة اللعب ---------- */
 .again.main{
     position: absolute;
     left: 31px;
     top: 35px;
     color: white;
-    font-size: 24px;
-    background-color: #634236;
-    padding: 20px;
+    font-size: clamp(16px, 3.5vw, 24px);
+    background-color: var(--brown-accent);
+    padding: clamp(12px, 3vw, 20px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -299,12 +364,16 @@ body{
     background-color: #543429;
     color: #eee;
 }
+
+/* ---------- شبكة كروت اللعبة ----------
+   الأصل كان Flexbox بعرض ثابت 100px لكل كارت،
+   استبدلناها بـ CSS Grid مع auto-fill عشان الكروت
+   تتلم تلقائي حسب مساحة الشاشة المتاحة بدون Overflow */
 .game-blocks{
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+    gap: 8px;
     margin-top: 25px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
 }
 .game-blocks.end{
     pointer-events: none;
@@ -313,9 +382,13 @@ body{
     pointer-events: none;
 }
 .game-blocks .block{
-    margin: 5px;
-    width: 100px;
-    height: 130px;
+    /* بدل width/height ثابتين بـ px، بنحافظ على نفس النسبة الأصلية
+       (100 / 130) باستخدام aspect-ratio عشان الكارت يفضل شكله
+       زي ما هو بس بمقاس متجاوب */
+    width: 100%;
+    max-width: var(--card-max);
+    aspect-ratio: 100 / 130;
+    margin: 0 auto;
     transform-style: preserve-3d;
     transition: transform 0.5s;
     position: relative;
@@ -327,8 +400,9 @@ body{
     pointer-events: none;
 }
 .game-blocks .block i{
-    font-size: 45px;
-    color: #5f443b;
+    /* حجم الأيقونة يتناسب مع حجم الكارت نفسه بدل رقم ثابت */
+    font-size: clamp(20px, 8vw, 45px);
+    color: var(--wood-color);
 }
 .game-blocks .back{
     background-color: #a5a5a5;
@@ -337,12 +411,12 @@ body{
     align-items: center;
     height: 100%;
     transform: rotateY(180deg);
-    border: 3px solid #0c0705;
+    border: 3px solid var(--wood-color-dark);
 }
 .game-blocks .front{
-    background-color: #5f443b;
+    background-color: var(--wood-color);
     height: 100%;
-    border: 5px solid #0c0705;
+    border: 5px solid var(--wood-color-dark);
 }
 .game-blocks .front::before{
     content: "?";
@@ -351,7 +425,7 @@ body{
     top: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    font-size: 75px;
+    font-size: clamp(28px, 10vw, 75px);
     font-weight: bold;
 }
 .game-blocks .face{
@@ -361,14 +435,13 @@ body{
     backface-visibility: hidden;
 }
 
+/* ---------- شاشات الفوز / الخسارة ---------- */
 .lose-container,
 .win-container{
     width: 100%;
     height: 100%;
     transition: 0.5s;
-
 }
-
 .win-container .win,
 .lose-container .lose{
     position: fixed;
@@ -376,20 +449,30 @@ body{
     top: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    padding: 7px 20px;
+    padding: clamp(10px, 3vw, 20px) clamp(14px, 4vw, 20px);
     border-radius: 15px;
     transition: 0.5s;
     z-index: 100;
     animation: win-appearing 1.5s cubic-bezier(1, 0, 0, 1);
+    width: min(320px, 88vw);
+    text-align: center;
 }
 .lose-container .lose{
     animation: lose-appearing 1.5s linear;
+}
+.lose h2,
+.win h2{
+    font-size: clamp(18px, 5vw, 24px);
 }
 .lose h2{
     color: red;
 }
 .win h2{
     color: rgb(0, 255, 64);
+}
+.lose p,
+.win p{
+    font-size: clamp(13px, 3vw, 16px);
 }
 .lose p{
     color: #ff1c0b;
@@ -399,7 +482,6 @@ body{
     color: #49594d;
     font-weight: bold;
 }
-
 .win i.again,
 .lose i.again{
     color: rgb(0, 255, 64);
@@ -407,11 +489,11 @@ body{
     display: block;
     margin: auto;
     transition: 0.5s;
+    font-size: clamp(20px, 5vw, 28px);
 }
 .lose i.again{
     color: rgb(255, 17, 0);
 }
-
 .win i.close,
 .lose i.close{
     position: absolute;
@@ -439,23 +521,29 @@ body{
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: transparent;
     background-color: rgba(0, 0, 0, 0.662);
     z-index: 99;
 }
+
+/* ---------- لوحة الصدارة (Leaderboard Sidebar) ----------
+   الأصل كان عرض ثابت 500px مع left: -496px (Hard-coded offset).
+   استبدلناها بـ transform: translateX(-100%) عشان الانزلاق
+   يشتغل صح مهما كان عرض العنصر (Responsive Width) */
 .ranking{
-    position: absolute;
-    left: -496px;
+    position: fixed;
+    left: 0;
     top: 0;
-    width: 500px;
+    width: min(500px, 90vw); /* على الموبايل ياخد نسبة من الشاشة بدل عرض ثابت */
     height: 100%;
     background-color: white;
     display: flex;
     flex-direction: column;
-    transition: 1s;
+    transform: translateX(-100%);
+    transition: transform 1s;
+    z-index: 50;
 }
 .ranking.open{
-    left: 0px;
+    transform: translateX(0);
 }
 .ranking.open .button{
     animation: none;
@@ -465,7 +553,7 @@ body{
     right: -31px;
     top: 50%;
     transform: translateY(-50%);
-    background-color: #634236;
+    background-color: var(--brown-accent);
     color: white;
     padding: 8px;
     border-radius: 50%;
@@ -475,7 +563,6 @@ body{
     transition: 0.5s;
     animation: glowing 3s alternate infinite linear;
     animation-delay: 5s;
-
 }
 .ranking .button:hover{
     color: rgb(194, 190, 190);
@@ -485,149 +572,149 @@ body{
     position: relative;
     margin: 0px auto;
     padding: 20px;
-    color: #634236;
+    color: var(--brown-accent);
+    font-size: clamp(20px, 4vw, 26px);
 }
 .ranking h1 i{
     position: absolute;
     left: -4px;
     top: 5px;
-    font-size: 26px;
+    font-size: clamp(18px, 3.5vw, 26px);
     transform: rotate(-40deg);
 }
 .ranking .main-row{
     display: flex;
     justify-content: space-between;
-    padding: 20px;
+    padding: clamp(12px, 3vw, 20px);
     color: white;
     font-weight: bold;
-    background-color: #634236;
+    background-color: var(--brown-accent);
     letter-spacing: 1px;
+    font-size: clamp(12px, 2.5vw, 16px);
 }
-
+.ranking .ra-container{
+    overflow-y: auto; /* سكرول داخلي لو القائمة طويلة، بدل ما تكسر الصفحة */
+}
 .ranking .ra-container .row{
     display: flex;
     justify-content: space-between;
-    padding: 14px;
+    padding: clamp(10px, 2.5vw, 14px);
     text-align: center;
     letter-spacing: 1px;
     background-color: #6342366e;
     margin: 8px 0px;
+    font-size: clamp(12px, 2.5vw, 16px);
 }
 .ranking .ra-container .row.none{
     display: none;
 }
 .ranking .row div{
     width: 50px;
-    font-size: 18px;
-    color: #634236;
-} 
+    font-size: inherit;
+    color: var(--brown-accent);
+}
+
+/* =====================================================
+   Media Queries — من الأكبر للأصغر (Desktop-first لأن
+   الكود الأصلي مبني على مقاسات ديسك توب ثابتة)
+   ===================================================== */
+
+/* تابلت / لابتوب صغير */
+@media (max-width: 768px){
+    .container{
+        margin: 10px auto;
+    }
+    .game-blocks{
+        gap: 6px;
+    }
+    .start .creator::before{
+        left: 115px;
+    }
+}
+
+/* موبايل */
+@media (max-width: 480px){
+    :root{
+        --card-min: 60px;
+    }
+    .again.main{
+        left: 10px;
+        top: 10px;
+    }
+    .info{
+        justify-content: center;
+        text-align: center;
+    }
+    .ranking .button{
+        width: 34px;
+        padding: 6px;
+        font-size: 17px;
+        right: -27px;
+    }
+    .start .creator{
+        bottom: 15px;
+        left: 10px;
+    }
+}
+
+/* شاشات ضيقة جداً */
+@media (max-width: 340px){
+    :root{
+        --card-min: 55px;
+    }
+    .game-blocks{
+        gap: 4px;
+    }
+}
+
+/* =====================================================
+   Animations (بدون أي تعديل — نفس الأصل)
+   ===================================================== */
 @keyframes vibr{
-    0%{
-        transform: translateX(-50%);
-    }
-    25%{
-        transform: translateX(-55%);
-    }
-    50%{
-        transform: translateX(-45%);
-    }
-    75%{
-        transform: translateX(-55%);
-    }
-    100%{
-        transform: translateX(-50%);
-    }
+    0%{ transform: translateX(-50%); }
+    25%{ transform: translateX(-55%); }
+    50%{ transform: translateX(-45%); }
+    75%{ transform: translateX(-55%); }
+    100%{ transform: translateX(-50%); }
 }
 @keyframes coloring{
-    from{
-        color: rgb(243, 243, 243);
-    }
-    to{
-        color: #f44336;
-    }
+    from{ color: rgb(243, 243, 243); }
+    to{ color: var(--red-color); }
 }
 @keyframes lose-appearing{
-    from {
-        opacity: 0;
-    }
-    to{
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to{ opacity: 1; }
 }
 @keyframes win-appearing{
-    from {
-        left: -500px;
-    }
-    to{
-        left: 50%;
-    }
+    from { left: -500px; }
+    to{ left: 50%; }
 }
 @keyframes glowing{
-    0%{
-        transform: translateY(-50%) rotate(0deg);
-    }
-    10%{
-        transform: translateY(-50%) rotate(20deg);
-    }
-    20%{
-        transform: translateY(-50%) rotate(-20deg);
-    }
-    30%{
-        transform: translateY(-50%) rotate(20deg);
-    }
-    40%{
-        transform: translateY(-50%) rotate(-20deg);
-    }
-    50%{
-        transform: translateY(-50%) rotate(20deg);
-    }
-    60%{
-        transform: translateY(-50%) rotate(0deg);
-    }
-    70%{
-        transform: translateY(-50%) rotate(0deg);
-    }
-    80%{
-        transform: translateY(-50%) rotate(0deg);
-    }
-    90%{
-        transform: translateY(-50%) rotate(0deg);
-    }
-    100%{
-        transform: translateY(-50%) rotate(0deg);
-    }
+    0%{ transform: translateY(-50%) rotate(0deg); }
+    10%{ transform: translateY(-50%) rotate(20deg); }
+    20%{ transform: translateY(-50%) rotate(-20deg); }
+    30%{ transform: translateY(-50%) rotate(20deg); }
+    40%{ transform: translateY(-50%) rotate(-20deg); }
+    50%{ transform: translateY(-50%) rotate(20deg); }
+    60%{ transform: translateY(-50%) rotate(0deg); }
+    70%{ transform: translateY(-50%) rotate(0deg); }
+    80%{ transform: translateY(-50%) rotate(0deg); }
+    90%{ transform: translateY(-50%) rotate(0deg); }
+    100%{ transform: translateY(-50%) rotate(0deg); }
 }
 @keyframes introduction{
-    from {
-        transform: translateY(0);
-    }
-    to{
-        transform: translateY(-1000px);
-    }
+    from { transform: translateY(0); }
+    to{ transform: translateY(-1000px); }
 }
 @keyframes appeared{
-    from{
-        top: 40%;
-        opacity: 0;
-    }
-    to{
-        top: 50%;
-        opacity: 1;
-    }
+    from{ top: 40%; opacity: 0; }
+    to{ top: 50%; opacity: 1; }
 }
 @keyframes clicked{
-    from{
-        color: white;
-    }
-    to{
-        color: #009688;
-    }
+    from{ color: white; }
+    to{ color: var(--main-color); }
 }
 @keyframes remove{
-    from{
-        transform: translateX(0);
-    }
-    to{
-        transform: translateX(-1500px);
-    }
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-1500px); }
 }
