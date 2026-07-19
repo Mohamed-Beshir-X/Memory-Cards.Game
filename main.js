@@ -8,93 +8,99 @@ let duration = 1000
 let rankingPage = document.querySelector(".ranking")
 let rankingBT = document.querySelector(".ranking .button")
 let rankingContainer = document.querySelector(".ranking .ra-container")
-let welcomePage = document.querySelector(".developer" )
+let welcomePage = document.querySelector(".developer")
 let rankingScores = []
 let gameInfo = document.querySelector("div.game-info")
-let repalyMain = document.querySelector(".again.main")
+let replayMain = document.querySelector(".again.main")
 let closeMain = document.querySelector(".close.main")
 let gameInfoBT = document.querySelector(".start span.game-info")
 let firstPage = document.querySelector(".first-page")
 let firstBT = document.querySelector(".first-page button")
 
 
-
-
-firstBT.addEventListener("click" , () => {
-    setTimeout(() => welcomePage.remove(),10000)
-    setTimeout(() => welcomePage.classList.add("active"),4000)
+firstBT.addEventListener("click", () => {
+    setTimeout(() => welcomePage.remove(), 10000)
+    setTimeout(() => welcomePage.classList.add("active"), 4000)
     firstBT.classList.add("clicked")
     document.querySelector("#correct").play()
-    setTimeout(()=>{
+    setTimeout(() => {
         document.querySelector("#intro").play()
         firstPage.classList.add("remove")
-        setTimeout(()=> firstPage.remove(),500)
+        setTimeout(() => firstPage.remove(), 500)
     }, 4000)
 })
 
 
-
-
-startBT.addEventListener("click" , function(){
-    if(theAlert.classList.contains("active")){
+startBT.addEventListener("click", function () {
+    if (theAlert.classList.contains("active")) {
         theAlert.classList.add("vibr")
-        setTimeout(function(){
+        setTimeout(function () {
             theAlert.classList.remove("vibr")
         }, 1000)
     }
     theAlert.classList.add("active")
 })
 
-window.onclick = function(e){
-    if (e.target === startBT.parentNode){
+window.onclick = function (e) {
+    if (e.target === startBT.parentNode) {
         theAlert.classList.remove("active")
     }
 }
-nameBT.onclick = function(){
-    if(nameInput.value === ""){
+
+nameBT.onclick = function () {
+    if (nameInput.value.trim() === "") {
         theAlert.classList.add("vibr")
-        setTimeout(function(){
+        setTimeout(function () {
             theAlert.classList.remove("vibr")
         }, 1000)
-    }else{
-        nameInput.value = nameInput.value[0].toUpperCase()+nameInput.value.slice(1).toLowerCase()
+    } else {
+        nameInput.value = nameInput.value[0].toUpperCase() + nameInput.value.slice(1).toLowerCase()
         document.querySelector(".name span").innerHTML = nameInput.value
         document.querySelector(".start").remove()
         theAlert.remove()
         document.querySelector("#intro").pause()
-        for(let i = 0; i < blocks.length ; i++){
+
+        for (let i = 0; i < blocks.length; i++) {
             blocks[i].classList.add("flipped")
         }
-        setTimeout((block) =>{
-            for(let i = 0; i < blocks.length ; i++){
+
+        setTimeout(() => {
+            for (let i = 0; i < blocks.length; i++) {
                 blocks[i].classList.remove("flipped")
             }
             document.querySelector("#game").play()
             document.querySelector("#game").volume = 0.5
-        },3000)
+        }, 3000)
+
+        // --- Countdown "3, 2, 1" before the game starts ---
         time.innerHTML = 3
         time.classList.add("starting")
-        let startingTime = setInterval(()=>{
+        let startingTime = setInterval(() => {
             time.innerHTML--
-        },1000)
-        setTimeout (() =>{
+        }, 1000)
+
+        setTimeout(() => {
             clearInterval(startingTime)
             time.classList.remove("starting")
             time.innerHTML = 60
+
+            // --- Single source of truth for the game timer (fixes the race
+            // condition / "0" string-match bug from the original version) ---
             let timing = setInterval(() => {
                 time.innerHTML--
-                if(blocksContainer.classList.contains("end")){
+
+                if (blocksContainer.classList.contains("end")) {
                     clearInterval(timing)
+                    return
                 }
-            },1000);
-            setTimeout(() =>{
-            clearInterval(timing)
-            if(time.innerHTML === "0"){
-                lose()
-            }
-        },60000)
+
+                if (Number(time.innerHTML) <= 0) {
+                    time.innerHTML = 0
+                    clearInterval(timing)
+                    lose()
+                }
+            }, 1000)
         }, 3000)
-        
     }
 }
 
@@ -104,25 +110,39 @@ let blocksOrder = Array.from(blocks.keys())
 
 let matched = []
 
-blocks.forEach((block , i ) =>{
+blocks.forEach((block, i) => {
     block.style.order = blocksOrder[i]
-    block.addEventListener("click" , function(){
+    block.addEventListener("click", function () {
+        // Guard: ignore clicks on a block that is already flipped/matched,
+        // while two cards are being checked, or once the game has ended.
+        // (Without this guard you could re-click matched pairs and inflate
+        // `matched.length`, triggering a false win.)
+        if (
+            block.classList.contains("flipped") ||
+            block.classList.contains("matched") ||
+            blocksContainer.classList.contains("no-clicking") ||
+            blocksContainer.classList.contains("end")
+        ) {
+            return
+        }
+
         document.querySelector("#flip").play()
         flipping(block)
-        if(block.classList.contains("matched")){
+
+        if (block.classList.contains("matched")) {
             matched.push(block)
-            
-            if(matched.length === blocks.length / 2){
+
+            if (matched.length === blocks.length / 2) {
                 win()
             }
         }
     })
 })
 
-function shuffle (array){
+function shuffle(array) {
     let current = array.length,
         temp
-    while (current > 0){
+    while (current > 0) {
         let random = Math.floor(Math.random() * current)
         current--
         temp = array[current]
@@ -132,51 +152,48 @@ function shuffle (array){
     return array
 }
 
-function flipping (selectedBlock){
+function flipping(selectedBlock) {
     selectedBlock.classList.add("flipped")
 
     let flippedBlocks = blocks.filter(block => block.classList.contains("flipped"))
 
-    if(flippedBlocks.length === 2 ){
+    if (flippedBlocks.length === 2) {
         stopClicking()
-        checkMatching(flippedBlocks[0] , flippedBlocks[1])
+        checkMatching(flippedBlocks[0], flippedBlocks[1])
     }
 }
 
-function stopClicking(){
+function stopClicking() {
     blocksContainer.classList.add("no-clicking")
 
-    setTimeout (() =>{
+    setTimeout(() => {
         blocksContainer.classList.remove("no-clicking")
     }, duration)
 }
-repalyMain.addEventListener("click" , ()=> location.reload())
-closeMain.addEventListener("click" , ()=> gameInfo.classList.remove("active"))
-gameInfoBT.addEventListener("click" , ()=> gameInfo.classList.add("active"))
-function checkMatching(fristBlock ,secondBlock){
+
+replayMain.addEventListener("click", () => location.reload())
+closeMain.addEventListener("click", () => gameInfo.classList.remove("active"))
+gameInfoBT.addEventListener("click", () => gameInfo.classList.add("active"))
+
+function checkMatching(firstBlock, secondBlock) {
     let tries = document.querySelector(".info .tries span")
-    if(fristBlock.dataset.shape === secondBlock.dataset.shape) {
-        fristBlock.classList.remove("flipped")
+    if (firstBlock.dataset.shape === secondBlock.dataset.shape) {
+        firstBlock.classList.remove("flipped")
         secondBlock.classList.remove("flipped")
-        fristBlock.classList.add("matched")
+        firstBlock.classList.add("matched")
         secondBlock.classList.add("matched")
         document.querySelector("#correct").play()
-    }else{
-        tries.innerHTML++
-        setTimeout(() =>{
-            fristBlock.classList.remove("flipped")
+    } else {
+        tries.innerHTML = Number(tries.innerHTML) + 1
+        setTimeout(() => {
+            firstBlock.classList.remove("flipped")
             secondBlock.classList.remove("flipped")
             document.querySelector("#wrong").play()
-        },duration)
+        }, duration)
     }
 }
 
-
-
-
-
-
-function lose(){
+function lose() {
     let loseContainer = document.createElement("div")
     let loseDiv = document.createElement("div")
     let loseLayer = document.createElement("div")
@@ -204,17 +221,18 @@ function lose(){
     closePop.classList.add("fas")
     closePop.classList.add("fa-close")
     closePop.classList.add("close")
-    closePop.addEventListener("click" , function(){
+    closePop.addEventListener("click", function () {
         loseContainer.remove()
     })
-    replay.addEventListener("click" , function(){
+    replay.addEventListener("click", function () {
         location.reload()
     })
     blocksContainer.classList.add("end")
     document.querySelector("#lose").play()
     document.querySelector("#game").pause()
 }
-function win(){
+
+function win() {
     let winContainer = document.createElement("div")
     let winDiv = document.createElement("div")
     let winLayer = document.createElement("div")
@@ -227,7 +245,7 @@ function win(){
     let congratulationText = document.createTextNode(`Try to reduce your wrong tries to be the master`)
     let checkText = document.createTextNode(`Check the leaderboard`)
     let timeSoccer = document.createElement("p")
-    let timeSoccerText = document.createTextNode(`You spend ${60 - +time.innerHTML} second Gooooood!`)
+    let timeSoccerText = document.createTextNode(`You spent ${60 - Number(time.innerHTML)} seconds. Good job!`)
     let soccerText = document.createTextNode(`You had made ${document.querySelector(".info .tries span").innerHTML} mistakes`)
     congratulation.appendChild(congratulationText)
     soccer.appendChild(soccerText)
@@ -252,85 +270,86 @@ function win(){
     closePop.classList.add("fas")
     closePop.classList.add("fa-close")
     closePop.classList.add("close")
-    closePop.addEventListener("click" , function(){
+    closePop.addEventListener("click", function () {
         winContainer.remove()
     })
     document.querySelector("#win").play()
     document.querySelector("#game").pause()
-    replay.addEventListener("click" , function(){
+    replay.addEventListener("click", function () {
         location.reload()
     })
     blocksContainer.classList.add("end")
-    let winner = `${document.querySelector(".name span").innerHTML}-${document.querySelector(".tries span").innerHTML}`
-    let array = []
-    for(let i = 0; i < rankingScores.length; i++){
-        if(winner.slice(0 , winner.indexOf("-")) === rankingScores[i].slice(0 , rankingScores[i].indexOf("-")) ){
-            
-            if(+winner.slice(winner.indexOf("-")+1) < +rankingScores[i].slice(rankingScores[i].indexOf("-")+1)){
-                localStorage.setItem(document.querySelector(".name span").innerHTML , document.querySelector(".tries span").innerHTML)
-            }
-        }else{
-            array.push(rankingScores[i])
-            if(array.length === rankingScores.length){
-                localStorage.setItem(document.querySelector(".name span").innerHTML , document.querySelector(".tries span").innerHTML)
-            }
-        }
-        
+
+    let playerName = document.querySelector(".name span").innerHTML
+    let playerTries = Number(document.querySelector(".tries span").innerHTML)
+    let existingScore = localStorage.getItem(playerName)
+
+    // Only overwrite the stored score if this run has fewer mistakes
+    // (or the player has no stored score yet).
+    if (existingScore === null || playerTries < Number(existingScore)) {
+        localStorage.setItem(playerName, playerTries)
     }
-    if(rankingContainer.children.length === 0){
-        localStorage.setItem(document.querySelector(".name span").innerHTML , document.querySelector(".tries span").innerHTML)
-    }
+
     resetRanking()
     ranking()
 }
-rankingBT.addEventListener("click" , function(){
-    if(rankingPage.classList.contains("open")){
+
+rankingBT.addEventListener("click", function () {
+    if (rankingPage.classList.contains("open")) {
         rankingPage.classList.remove("open")
-    }else{
+    } else {
         rankingPage.classList.add("open")
     }
 })
 
-
-function ranking(){
+function ranking() {
     rankingScores = []
-    rankingContainer.childNodes.forEach((child) =>{
+
+    // Fix: iterating a live NodeList with forEach while removing its items
+    // skips every other node. Convert to a static array first.
+    Array.from(rankingContainer.childNodes).forEach((child) => {
         child.remove()
     })
-    for (let [key , value] of Object.entries(localStorage)){
+
+    for (let [key, value] of Object.entries(localStorage)) {
         rankingScores.push(`${key}-${value}`)
-    } 
-    let current = rankingScores.length,
-    temp,
-    orderedRanking = []                                                                          
-    for(let i = 0; i < rankingScores.length ; i++){
-        while(current > 1){
-            current --
-            if (rankingScores[current].slice(rankingScores[current].indexOf("-")) > rankingScores[current-1].slice(rankingScores[current-1].indexOf("-"))){
-                temp = rankingScores[current - 1]
-                rankingScores[current - 1] = rankingScores[current]
-                rankingScores[current] = temp
-            }                                                                          
-        }
-        current = rankingScores.length
     }
-    
-    for (let i = 0; i < rankingScores.length; i++){
+
+    // Fix: compare scores numerically, not as strings
+    // (string comparison broke as soon as a score reached 2 digits,
+    // e.g. "9" > "10" was true lexicographically).
+    for (let i = 0; i < rankingScores.length; i++) {
+        for (let j = rankingScores.length - 1; j > 0; j--) {
+            let currentScore = Number(rankingScores[j].slice(rankingScores[j].indexOf("-") + 1))
+            let prevScore = Number(rankingScores[j - 1].slice(rankingScores[j - 1].indexOf("-") + 1))
+            if (currentScore > prevScore) {
+                let temp = rankingScores[j - 1]
+                rankingScores[j - 1] = rankingScores[j]
+                rankingScores[j] = temp
+            }
+        }
+    }
+
+    for (let i = 0; i < rankingScores.length; i++) {
         let row = document.createElement("div")
         row.classList.add("row")
         row.classList.add(rankingScores[i])
+
         let playerName = document.createElement("div")
-        let playerNameText = document.createTextNode(rankingScores[i].slice(0 , rankingScores[i].indexOf("-") ))
+        let playerNameText = document.createTextNode(rankingScores[i].slice(0, rankingScores[i].indexOf("-")))
         playerName.classList.add("name")
         playerName.appendChild(playerNameText)
+
         let playerScore = document.createElement("div")
-        let playerScoreText = document.createTextNode(rankingScores[i].slice(rankingScores[i].indexOf("-")+1))
+        let playerScoreText = document.createTextNode(rankingScores[i].slice(rankingScores[i].indexOf("-") + 1))
         playerScore.appendChild(playerScoreText)
         playerScore.classList.add("score")
+
         let playerRanking = document.createElement("div")
         let playerRankingText = document.createTextNode(rankingScores.length - i)
         playerRanking.appendChild(playerRankingText)
         playerRanking.classList.add("p")
+
         row.appendChild(playerName)
         row.appendChild(playerScore)
         row.appendChild(playerRanking)
@@ -339,8 +358,8 @@ function ranking(){
 }
 ranking()
 
-function resetRanking(){
-    for(let i = 0; i < rankingScores.length; i++){
+function resetRanking() {
+    for (let i = 0; i < rankingContainer.childNodes.length; i++) {
         rankingContainer.childNodes[i].classList.add("none")
     }
 }
